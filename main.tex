@@ -20,15 +20,17 @@
 
 \maketitle
 
-\tableofcontents
+\section{Abstract}
+
+This paper will explore how data is transferred at the physical layer, touching on methods, issues, and overviews of infrastructure. I explore two broad mediums for physical data transfer in this paper: wireless electromagnetic data transmission, and optical data transmission. I give an overview of how data is transferred in each medium, as well as cover issues with transmitting data through that medium. I also explore a case study in each medium, discussing the finer details of each example.
 
 \section{Introduction}
 
-This paper will explore how data is transferred at the physical layer, touching on methods, issues, and overviews of infrastructure. I explore two broad mediums for physical data transfer in this paper: wireless electromagnetic data transmission, and optical data transmission. I will give an overview of how data is transferred in each medium, as well as cover issues with transmitting data through that medium. I will also explore a case study in each medium, discussing the finer details of each example.
-
-\section{Physical Layer Overview}
+At its core, transferring data over a physical medium is simply communication. To talk about physical data transfer in the broadest sense is to talk about methods of human communication in the broadest sense. Semaphore, smoke signals, Morse code via heliograph, even basic verbal communication can all be considered physical data transfer. However, for the purposes of this paper,the scope of what physical data transfer is will be narrowed down to modern day inter-computer communication. Although much of what will be discussed here can be abstracted out to describe telegraph communication, beacon chain communication, and even homing pigeon communication, we will try to keep our focus around modern day architecture and methodology. 
 
 In any data communication system, there are three components: the source, the transmission medium (or physical medium), and the destination. The source consists of the source machine and a transmitter. The source machine converts data into discrete digital signals and sends that to the transmitter to be converted into an analog signal. The transmitter sends the analog signal through the transmission medium to the destination. The transmission medium (e.g., a wire, the air, a cable) is simply something that can facilitate the propagation of the analog signal from source to destination. The destination consists of a receiver and the destination machine. The receiver receives data from the transmitter through the transmission medium in the form of an analog signal, converts that signal back into a discrete digital signal, which, in theory, should be the same as the original digital signal that the source machine passed to the transmitter. The receiver then passes the digital signal to the destination machine. Most often, both the receiver and transmitter consist of modems, and utilize hardware (such as an antenna or a photodetector) to do digital-to-analog conversion, or analog-to-digital conversion.
+
+\section{Physical Layer Overview}
 
 \begin{figure}[!htbp]
     \centering
@@ -39,7 +41,7 @@ In any data communication system, there are three components: the source, the tr
 
 In order for data to enter into the physical layer from the link layer, the data needs to take on a physical form, or signal. A signal is a physical representation of data, usually consisting of two modes that each represent a 0 or a 1, as almost all data transmission today is with binary bits. Signals can be a high and low voltage across an electrically conductive wire, a series of light pulses down a fiber optic cable, electromagnetic waves modulated based on frequency or amplitude, or any other physical representation that has two distinct states.
 
-However, there is a fundamental problem with using a physical medium to transmit bits. Bits are binary, and as such, they are discrete, either a "one" or a "zero", "on" or "off". This means that to construct a signal of pure bits, the signal must be made of a series of discrete modes that represent the discrete values. This is most often done with a logic signal, a signal with only two possible values. Logic signals are connected to form line codes to construct digital signals. For the purposes of this paper, digital signals may only take on one of two values at most at any given time. Most commonly, digital signals are represented by two different voltages, one representing “off” or a “zero”, and one representing “on” or a “one”. Because a digital signal can only be one of two values at any time, small deviations from the specified voltages do not change the value that the digital signal encodes, because the deviations in voltages will always fall within the voltage band, by definition. A line code is the pattern of voltages that both end systems agree upon to represent digital signals that are transmitted.
+However, there is a fundamental problem with using a physical medium to transmit bits. Bits are binary, and as such, they are discrete, either a "one" or a "zero", "on" or "off". This means that to construct a signal of pure bits, the signal must be made of a series of discrete modes that represent the discrete values. This is most often done with a logic signal, a signal with only two possible values. Logic signals are connected to form line codes to construct digital signals. For the purposes of this paper, digital signals may only take on one of two values at most at any given time. Most commonly, digital signals are represented by two different voltages, one representing “off” or a “zero”, and one representing “on” or a “one”. Because a digital signal can only be one of two values at any time, small deviations from the specified voltages do not change the value that the digital signal encodes, because the deviations in voltages will always fall within the voltage band, by definition. 
 
 \begin{figure}[!htbp]
     \centering
@@ -56,7 +58,25 @@ A passband is a signal that corresponds to the “on” or “one” state. In r
 
 A baseband is a signal that corresponds to the “off” or “zero” state. This means that baseband signals are transmitted without modulation, i.e., at, or near zero-frequency when compared with the highest frequency allowed. Similarly to passbands, there is typically not one exact signal that the machine will interpret as a baseband signal, but rather a range of signals. This range is called the baseband channel. Usually, the baseband signals that a machine receives are filtered out by the passband filter.
 
-Any device using analog signals to communicate (i.e., any device that is transmitting over a physical medium) will necessarily need apparatuses to do digital-to-analog conversions and analog-to-digital conversions. The apparatuses that do these conversions are called modems (a portmanteau of “modulator-demodulator”). A receiving modem takes in an analog signal (usually a varying voltage or a series of light pulses) and, using a passband and a baseband, converts the analog signal into a digital signal or bitstream. A transmitting modem essentially does the opposite, taking a digital signal and converting it into an analog signal according to standardized frequencies between the two end systems, then sending that analog signal out through the transmission medium. 
+Any device using analog signals to communicate (i.e., any device that is transmitting over a physical medium) will necessarily need apparatuses to do digital-to-analog conversions and analog-to-digital conversions. The apparatuses that do these conversions are called modems (a portmanteau of “modulator-demodulator”). A receiving modem takes in an analog signal (usually a varying voltage or a series of light pulses) and, using a passband and a baseband, converts the analog signal into a digital signal or bitstream. A transmitting modem essentially does the opposite, taking a digital signal and converting it into an analog signal according to standardized frequencies between the two end systems, then sending that analog signal out through the transmission medium.
+
+Finally, a line code is the pattern of voltages that both end systems agree upon to represent digital signals that are transmitted. A signal is line encoded before being transmitted through a physical medium. Most often, a line code is bipolar and consist of two opposite states, usually two voltages, one positive and one negative. For a line code to effectively facilitate communication between two devices, they must have synchronized clocks and agree upon the duration of a single bit of information within the signal. There are several methods to synchronize a transmitter and receiver, but the most common method is to allow the transmitter to transmit a line code at the rate they choose and to have the receiver measure the duration of time between "flips" of the signal, and adjust to the tempo the transmitter sets. Additionally, there are multiple different line codes that are commonly used, namely,  unipolar, polar, bipolar, and Manchester code. Unipolar encoding uses a positive voltage (or light pulse, etc.) to represent a 1, and no voltage (or absence of light, etc.) to represent a 0. Polar encoding uses a positive voltage (or light pulse, etc.) to represent a 1, and an equal but opposite negative voltage (or pulse of light of a different wavelength, etc.) to represent a 0. In bipolar encoding, an alternate mark inversion (AMI) is used, meaning an absence of voltage (or absence of light, etc.) represents a 0, and an alternating positive and negative voltage represents a 1. This promotes transmission integrity because if a receiver receives two positive or two negative voltages in a row, something has gone wrong. Manchester code assigns each bit to be either a positive voltage then negative (or zero) voltage in one time period to represent one bit, or a negative voltage then a positive (or zero) voltage in one time period to represent the other bit. The benefit of Manchester code is that it is self-clocking, and does not require the clocks of the transmitter and receiver to be synchronized.
+
+\begin{figure}[!htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{bipolarencoding.png}
+        \caption{Bipolar encoding}
+        \label{fig:bipolarencoding}
+    \end{minipage}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{manchesterencoding.png}
+        \caption{Manchester encoding}
+        \label{fig:manchesterencoding}
+    \end{minipage}
+\end{figure}
 
 \section{Wireless Electromagnetic Data Transfer}
 
@@ -91,7 +111,7 @@ Long-Term Evolution (LTE) is a wireless standard for data transmission, usually 
 
 In contrast to electromagnetic waves, in a classical physical sense, optical data transfer is done with packets of light called photons. For the purposes of this paper, photons can be thought of as particles of light that have a frequency (color), and travel at the speed of light in whatever medium they are travelling. As with any other method of physical data transfer, in order for a packet of photons to be able to transmit data, a signal has to be modulated. However, in optical data transfer, it is not necessarily the frequency of the photons that is modulated, though that is a valid modulation method. Often, it is the absence of light that is used in modulation to create two distinct modes, though this does require the transmitter and receiver to agree on the length of time for a single bit to be transmitted. For example, a transmitter and receiver could define the time length for transmission of one bit to be one second, so one second of no photons means a “zero” and one second of photons means a “one”. 
 
-Optical data transfer, unlike wireless electromagnetic data transfer, is not effective when used omnidirectionally. In order to direct photons to their intended destination, most of the time optical fiber is used. Optical fibers are wires of glass that exhibit total internal reflection, meaning that photons travel down the wire without escaping until the end of the wire. There are other methods of optical data transfer that do not employ optical fibers (such as high-intensity lasers), but they are usually not used terrestrially, as physical interference makes this method impractical. 
+Optical data transfer, unlike wireless electromagnetic data transfer, is not effective when used omnidirectionally. In order to direct photons to their intended destination, most of the time optical fiber is used. Optical fibers are not like a typical metal wire that carry signals via varying voltages. Optical fibers are tubes of glass that exhibit total internal reflection, meaning that photons travel down the tube without escaping until the end of the tube. There are other methods of optical data transfer that do not employ optical fibers (such as high-intensity lasers), but they are usually not used terrestrially, as physical interference makes this method impractical. 
 
 Additionally, transmitters and receivers using optical data transfer can use wave division multiplexing to vastly increase the throughput through optical fibers. Wave division multiplexing is the process of multiplexing, or combining, several optical signals into one signal and sending that signal through the optical fiber. This allows not only for a large increase in the potential throughput of the fiber, but also for multidirectional simultaneous data transfer. 
 
@@ -112,13 +132,3 @@ In recent years, satellites in space have been using free-space optical communic
 \nocite{*}
 \printbibliography
 \end{document}
-
-
-% Questions for Final draft:
-% Include section on guided vs unguided transmissions?
-% Add a dedicated section to fiber optic cables?
-% Add section for multiplexing?
-% Do I have enough figures?
-% Do I have enough historical information?
-% Revise sources.bib and see if the sources don't have more information for citation
-% Include an abstract?
